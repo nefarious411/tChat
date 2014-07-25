@@ -37,6 +37,10 @@ public class ConnectionManager {
     }
   };
 
+  public ConnectionManager(TwitchListener listener) {
+    this.twitchListener = listener;
+  }
+
   public void connect(String username, String oauthToken) {
     Configuration configuration = new Builder()
         .setName(username)
