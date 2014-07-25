@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>ml.tchat</groupId>
+  <artifactId>tchat-parent</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <dep.version.tchat>0.1-SNAPSHOT</dep.version.tchat>
+    <dep.version.log4j>1.2.17</dep.version.log4j>
+    <dep.version.slf4j>1.7.7</dep.version.slf4j>
+    <gmavenVersion>1.4</gmavenVersion>
+    <gmavenProviderSelection>2.0</gmavenProviderSelection>
+  </properties>
+
+
+  <modules>
+    <module>ml.tchat.core</module>
+    <module>ml.tchat.cli</module>
+    <module>ml.tchat.ui</module>
+  </modules>
+
+</project>
