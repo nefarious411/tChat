@@ -54,6 +54,10 @@ public class ConnectionManager {
     connectionThread.start();
   }
 
+  public void send(String command) {
+    connection.sendRaw().rawLine(command);
+  }
+
   public void disconnect() {
     if (!isConnected()) {
       logger.info("Not connected");
