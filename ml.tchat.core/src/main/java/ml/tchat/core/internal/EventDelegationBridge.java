@@ -4,6 +4,7 @@ package ml.tchat.core.internal;
 import com.google.common.eventbus.EventBus;
 import ml.tchat.core.event.ConnectionReadyEvent;
 import ml.tchat.core.event.MessageReceivedEvent;
+import ml.tchat.core.model.factory.ModelTypeConverter;
 import org.apache.log4j.Logger;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -23,7 +24,10 @@ public class EventDelegationBridge extends ListenerAdapter<PircBotX> {
 
   @Override
   public void onMessage(MessageEvent<PircBotX> event) throws Exception {
-    eventBus.post(new MessageReceivedEvent(connection, event));
+    eventBus.post(new MessageReceivedEvent(connection,
+        ModelTypeConverter.convert(event.getChannel()),
+        ModelTypeConverter.convert(event.getUser()),
+        event.getMessage()));
   }
 
   @Override

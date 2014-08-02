@@ -20,7 +20,8 @@ public class ConnectionImpl implements Connection {
   private static final Logger logger = Logger.getLogger(ConnectionImpl.class);
   private static final int TWITCH_CLIENT_VERSION = 1;
 
-  public static final String HOSTNAME = "irc.twitch.tv";
+  //public static final String HOSTNAME = "irc.twitch.tv";
+  public static final String HOSTNAME = "127.0.0.1";
   public static final int PORT = 6667;
   public static final boolean IS_SSL = false;
 
@@ -145,6 +146,7 @@ public class ConnectionImpl implements Connection {
   public void onConnectionReady(ConnectionReadyEvent event) {
     // only operation on this connection.
     if (event.getConnection() == this) {
+      logger.info("Connection established");
       bot.sendRaw().rawLine("TWITCHCLIENT " + TWITCH_CLIENT_VERSION);
     }
   }

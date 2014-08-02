@@ -2,17 +2,13 @@ package ml.tchat.core.event;
 
 import ml.tchat.core.Connection;
 
-public abstract class Event<E extends org.pircbotx.hooks.Event> {
+public abstract class Event {
   private final Connection connection;
-  private final E origEvent;
+  private final long timestamp;
 
   public Event(Connection connection) {
-    this(connection, null);
-  }
-
-  public Event(Connection connection, E origEvent) {
     this.connection = connection;
-    this.origEvent = origEvent;
+    this.timestamp = System.currentTimeMillis();
   }
 
   /**
@@ -24,7 +20,7 @@ public abstract class Event<E extends org.pircbotx.hooks.Event> {
     return connection;
   }
 
-  protected E getOrigEvent() {
-    return origEvent;
+  public long getTimestamp() {
+    return timestamp;
   }
 }

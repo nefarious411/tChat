@@ -1,25 +1,33 @@
 package ml.tchat.core.event;
 
 import ml.tchat.core.Connection;
-import org.pircbotx.Channel;
-import org.pircbotx.User;
-import org.pircbotx.hooks.events.MessageEvent;
+import ml.tchat.core.model.Channel;
+import ml.tchat.core.model.User;
 
-public class MessageReceivedEvent extends Event<MessageEvent<?>> {
+public class MessageReceivedEvent extends Event {
 
-  public MessageReceivedEvent(Connection connection, MessageEvent event) {
-    super(connection, event);
+  private final Connection connection;
+  private final Channel channel;
+  private final User user;
+  private final String message;
+
+  public MessageReceivedEvent(Connection connection, Channel channel, User user, String message) {
+    super(connection);
+    this.connection = connection;
+    this.channel = channel;
+    this.user = user;
+    this.message = message;
   }
 
   public String getMessage() {
-    return getOrigEvent().getMessage();
+    return message;
   }
 
   public User getUser() {
-    return getOrigEvent().getUser();
+    return user;
   }
 
   public Channel getChannel() {
-    return getOrigEvent().getChannel();
+    return channel;
   }
 }

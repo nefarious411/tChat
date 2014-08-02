@@ -2,9 +2,11 @@ package ml.tchat.cli
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
+import ml.tchat.core.Connection
 import ml.tchat.core.ConnectionManager
 import ml.tchat.core.event.ConnectionReadyEvent
 import ml.tchat.core.event.MessageReceivedEvent
+import ml.tchat.plugins.core.TChatPlugins
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -42,6 +44,11 @@ class TChatCli {
 
     initLogging()
 
+    TChatPlugins plugins = new TChatPlugins()
+    plugins.start()
+
+
+
     new TChatCli(options).go();
   }
 
@@ -63,7 +70,7 @@ class TChatCli {
 
 
 
-  private connection;
+  private Connection connection;
 
   public TChatCli(options) {
 
@@ -73,38 +80,8 @@ class TChatCli {
 
 
   public void go() {
-    /*
-    ConnectionManager connectionManager = new ConnectionManager(new TwitchListener() {
-      @Override
-      void onMessage(MessageEvent<PircBotX> event) throws Exception {
-        super.onMessage(event);
-
-        //if ((["OP"] - event.getUser().getUserLevels(event.getChannel())).isEmpty()) {
-        //return;
-        //}
-        boolean doTimeout = timeoutpatterns.find {
-          event.message.toLowerCase() =~ it
-        }
-        if (doTimeout) {
-          println "timing out ${event.user.nick} for message: ${event.message}"
-          event.getBot().sendIRC().message(event.channel.name, ".timeout " + event.user.nick + " 1")
-        }
-      }
-
-      @Override
-      void onMotd(MotdEvent<PircBotX> event) throws Exception {
-        super.onMotd(event)
-        event.bot.sendRaw().rawLine("TWITCHCLIENT 1");
-        event.bot.sendIRC().joinChannel('#aureylian')
-      }
-    });
-    */
-
     Logger.getLogger(TChatCli).info('connecting')
     connection.connect()
-    Logger.getLogger(TChatCli).info('connected')
-
-
 
     System.in.eachLine { line ->
       if (line == 'exit') {
@@ -142,7 +119,7 @@ class TChatCli {
         def parts = line.split(' ')
         Logger.getLogger(parts[1]).setLevel(Level.toLevel(parts[2]))
       } else {
-        //connectionManager.send(line)
+        connection.sendRaw().rawLine(line)
       }
     }
   }
@@ -150,7 +127,7 @@ class TChatCli {
 
   @Subscribe
   public void onConnectionReady(ConnectionReadyEvent event) {
-    event.connection.sendIRC().joinChannel("aureylian")
+    event.connection.sendIRC().joinChannel("#nefarious411")//aureylian")
   }
 
   @Subscribe
