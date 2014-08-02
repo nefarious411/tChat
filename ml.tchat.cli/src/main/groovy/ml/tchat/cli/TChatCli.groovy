@@ -6,7 +6,6 @@ import ml.tchat.core.Connection
 import ml.tchat.core.ConnectionManager
 import ml.tchat.core.event.ConnectionReadyEvent
 import ml.tchat.core.event.MessageReceivedEvent
-import ml.tchat.plugins.core.TChatPlugins
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -43,11 +42,6 @@ class TChatCli {
     }
 
     initLogging()
-
-    TChatPlugins plugins = new TChatPlugins()
-    plugins.start()
-
-
 
     new TChatCli(options).go();
   }

@@ -4,7 +4,7 @@ package ml.tchat.core.internal;
 import com.google.common.eventbus.EventBus;
 import ml.tchat.core.event.ConnectionReadyEvent;
 import ml.tchat.core.event.MessageReceivedEvent;
-import ml.tchat.core.model.factory.ModelTypeConverter;
+import ml.tchat.core.model.util.ModelTypeConverter;
 import org.apache.log4j.Logger;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;

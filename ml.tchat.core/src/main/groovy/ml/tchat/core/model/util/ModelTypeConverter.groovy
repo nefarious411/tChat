@@ -1,4 +1,4 @@
-package ml.tchat.core.model.factory
+package ml.tchat.core.model.util
 
 import ml.tchat.core.model.Channel
 import ml.tchat.core.model.User
