@@ -20,6 +20,7 @@
 
   <modules>
     <module>ml.tchat.core</module>
+    <module>ml.tchat.plugins</module>
     <module>ml.tchat.cli</module>
     <module>ml.tchat.ui</module>
   </modules>

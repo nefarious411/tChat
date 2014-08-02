@@ -1,81 +1,56 @@
 package ml.tchat.core;
 
 
+import com.google.common.eventbus.EventBus;
+import ml.tchat.core.internal.ConnectionImpl;
 import org.apache.log4j.Logger;
-import org.pircbotx.Configuration;
-import org.pircbotx.Configuration.Builder;
-import org.pircbotx.PircBotX;
-import org.pircbotx.exception.IrcException;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class ConnectionManager {
 
   private static final Logger logger = Logger.getLogger(ConnectionManager.class);
-  public static final String HOSTNAME = "irc.twitch.tv";
-  public static final int PORT = 6667;
-  public static final boolean IS_SSL = false;
+  private static Set<Connection> connections = new HashSet<Connection>();
 
+  /**
+   * Creates and returns a new Connection instance.
+   * <p/>
+   * Connection instance does not start in "connected" state.
+   *
+   * @param username
+   * @param oauthToken
+   * @return Connection
+   */
+  public static Connection createConnection(String username, String oauthToken) {
+    return createConnection(new EventBus(), username, oauthToken);
+  }
 
-  private TwitchListener twitchListener;
+  /**
+   * Creates and returns a new Connection instance
+   * <p/>
+   * Connection instance does not start in a "connected" state.
+   *
+   * @param eventBus
+   * @param username
+   * @param oauthToken
+   * @return
+   */
+  public static Connection createConnection(EventBus eventBus, String username, String oauthToken) {
+    Connection connection = new ConnectionImpl(eventBus, username, oauthToken);
+    connections.add(connection);
+    return connection;
+  }
 
-  private PircBotX connection;
-  private Thread connectionThread;
-  private Runnable connectionRunnable = new Runnable() {
-    @Override
-    public void run() {
-      if (connection != null) {
-        try {
-          connection.startBot();
-        } catch (IOException e) {
-          e.printStackTrace();
-        } catch (IrcException e) {
-          e.printStackTrace();
-        }
+  /**
+   * Disconnects all managed connections
+   */
+  public static void disconnectAll() {
+    for (Connection connection : connections) {
+      if (connection.isConnected()) {
+        connection.disconnect();
       }
     }
-  };
-
-  public ConnectionManager(TwitchListener listener) {
-    this.twitchListener = listener;
-  }
-
-  public void connect(String username, String oauthToken) {
-    Configuration configuration = new Builder()
-        .setName(username)
-        .setLogin(username)
-        .addListener(twitchListener)
-        .setServer(HOSTNAME, PORT, oauthToken)
-        .buildConfiguration();
-    connection = new PircBotX(configuration);
-
-    connectionThread = new Thread(connectionRunnable);
-    connectionThread.start();
-  }
-
-  public void send(String command) {
-    connection.sendRaw().rawLine(command);
-  }
-
-  public void disconnect() {
-    if (!isConnected()) {
-      logger.info("Not connected");
-      return;
-    }
-    connection.stopBotReconnect();
-    connection.sendRaw().rawLine("QUIT");
-
-    try {
-      connectionThread.join(5000L);
-    } catch (InterruptedException e) {
-      logger.warn("Cannot join thread", e);
-    }
-    connection = null;
-    connectionThread = null;
-  }
-
-  public boolean isConnected() {
-    return connection != null && connection.isConnected();
   }
 }
