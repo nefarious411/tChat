@@ -133,12 +133,13 @@
       <version>${dep.version.tchat}</version>
     </dependency>
 
+    <!--
     <dependency>
       <groupId>ml.tchat</groupId>
       <artifactId>tchat-plugins</artifactId>
       <version>${dep.version.tchat}</version>
     </dependency>
-
+    -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
