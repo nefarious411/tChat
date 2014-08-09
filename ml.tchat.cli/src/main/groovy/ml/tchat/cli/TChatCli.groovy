@@ -11,14 +11,20 @@ import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 class TChatCli {
 
   static EventBus eventBus = new EventBus("globalEventBus")
 
 
   static timeoutpatterns = [
-      /\bboob\b/,
+      /\bboobs?\b/,
+      /\bbewbs?\b/,
+      /\bfap\b/,
       /fuck/,
+      /fuq/,
       /\bshit\b/,
       /\*\*\*/,
       /\bpussy\b/,
@@ -27,6 +33,9 @@ class TChatCli {
       /\bfuq\b/,
       /\bdafuq\b/,
       /\bfart/,
+      /\(\s*Y\s*\)/,
+      /\(\s*\.?\s*Y\s*\.?\s*\)/,
+      /8=+D/,
   ]
 
   static void main(String[] args) {
@@ -133,7 +142,7 @@ class TChatCli {
       event.message.toLowerCase() =~ it
     }
     if (doTimeout) {
-      println "timing out ${event.user.nick} for message: ${event.message}"
+      println "${new Date().format("yyyy-dd-mm HH:mm")} - timing out ${event.user.nick} for message: ${event.message}"
       event.connection.sendIRC().message(event.channel.name, ".timeout " + event.user.nick + " 1")
     }
   }
