@@ -55,7 +55,7 @@ class ChatDaoImpl implements ChatDao {
   @Transactional
   public Channel findOrCreateChannel(String channelName) {
     def label = DynamicLabel.label("channel")
-    Node channelNode = getSingleNode(label, 'channelName', channelName)
+    Node channelNode = getSingleNode(label, 'name', channelName)
 
     if (channelNode != null) {
       return new Channel(underlyingNode: channelNode)

@@ -42,7 +42,7 @@ class ChatPersistService extends Neo4jPersistService {
       }
       if (!getConstraints(DynamicLabel.label('channel')).iterator().hasNext()) {
         constraintFor(DynamicLabel.label('channel'))
-            .assertPropertyIsUnique('channelName')
+            .assertPropertyIsUnique('name')
             .create()
       }
     }
