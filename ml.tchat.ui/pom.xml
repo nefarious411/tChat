@@ -133,11 +133,7 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>${dep.version.slf4j}</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>3.0</version>
-    </dependency>
+
   </dependencies>
 
 

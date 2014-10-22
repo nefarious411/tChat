@@ -114,6 +114,70 @@
       <version>${dep.version.slf4j}</version>
     </dependency>
 
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.10</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-persist</artifactId>
+      <version>3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-assistedinject</artifactId>
+      <version>3.0</version>
+    </dependency>
+
+    <!--
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    -->
+
+    <!--
+    <dependency>
+      <groupId>net.ltgt.guice</groupId>
+      <artifactId>guice-persist-neo4j</artifactId>
+      <version>0.1</version>
+    </dependency>
+    -->
+
+    <!--
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.11.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.j256.ormlite</groupId>
+      <artifactId>ormlite-jdbc</artifactId>
+      <version>4.48</version>
+    </dependency>
+    -->
+
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j</artifactId>
+      <version>2.1.5</version>
+    </dependency>
   </dependencies>
 
 

@@ -1,4 +1,4 @@
-package ml.tchat.ui.util
+package ml.tchat.core.util
 
 public final class FileUtil {
 

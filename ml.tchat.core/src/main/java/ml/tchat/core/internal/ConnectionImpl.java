@@ -3,24 +3,29 @@ package ml.tchat.core.internal;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import ml.tchat.core.Connection;
+import ml.tchat.core.config.TChatConfig;
+import ml.tchat.core.db.impl.EventDelegationBridge;
 import ml.tchat.core.event.ConnectionReadyEvent;
 import org.apache.log4j.Logger;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
+import org.pircbotx.hooks.managers.BackgroundListenerManager;
 import org.pircbotx.output.OutputCAP;
 import org.pircbotx.output.OutputDCC;
 import org.pircbotx.output.OutputIRC;
 import org.pircbotx.output.OutputRaw;
 
+import javax.inject.Inject;
 import java.io.IOException;
 
 public class ConnectionImpl implements Connection {
   private static final Logger logger = Logger.getLogger(ConnectionImpl.class);
-  private static final int TWITCH_CLIENT_VERSION = 1;
+  private static final int TWITCH_CLIENT_VERSION = 2;
 
   public static final String HOSTNAME;
+
   static {
     String localDev = System.getProperty("localDev");
     if (Boolean.valueOf(localDev)) {
@@ -29,13 +34,16 @@ public class ConnectionImpl implements Connection {
       HOSTNAME = "irc.twitch.tv";
     }
   }
+
   public static final int PORT = 6667;
   public static final boolean IS_SSL = false;
 
 
   private final String username;
   private final String oauthToken;
-  private final EventBus eventBus;
+
+  private EventBus eventBus;
+  private EventDelegationBridge eventDelegationBridge;
 
   private PircBotX bot;
   private Thread connectionThread;
@@ -62,16 +70,18 @@ public class ConnectionImpl implements Connection {
    * </p>
    *
    * @param eventBus
-   * @param username
-   * @param oauthToken
-   * @see ml.tchat.core.ConnectionManager
+   * @param config
    */
-  public ConnectionImpl(EventBus eventBus, String username, String oauthToken) {
+  @Inject
+  public ConnectionImpl(EventBus eventBus, TChatConfig config, EventDelegationBridge eventDelegationBridge) {
     this.eventBus = eventBus;
-    this.username = username;
-    this.oauthToken = oauthToken;
+    this.username = config.getUsername();
+    this.oauthToken = config.getOauthToken();
+    this.eventDelegationBridge = eventDelegationBridge;
 
     eventBus.register(this);
+
+    eventDelegationBridge.setConnection(this);
   }
 
   /**
@@ -82,13 +92,19 @@ public class ConnectionImpl implements Connection {
       logger.warn("Connection already established.");
       return;
     }
+    BackgroundListenerManager backgroundListenerManager = new BackgroundListenerManager();
 
     Configuration configuration = new Builder()
         .setName(username)
         .setLogin(username)
-        .addListener(new EventDelegationBridge(eventBus, this))
+        //.addListener(eventDelegationBridge)
         .setServer(HOSTNAME, PORT, oauthToken)
+        .setListenerManager(backgroundListenerManager)
         .buildConfiguration();
+    // using this one so make sure messages are handled in order.
+    // multi-threading happens after using our EventBus
+    backgroundListenerManager.addListener(eventDelegationBridge, true);
+
     this.bot = new PircBotX(configuration);
 
     connectionThread = new Thread(connectionRunnable);

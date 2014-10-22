@@ -1,7 +1,7 @@
-package ml.tchat.ui.config
+package ml.tchat.core.config
 
-import ml.tchat.ui.ioc.InjectConstants
-import ml.tchat.ui.util.FileUtil
+import ml.tchat.core.ioc.InjectConstants
+import ml.tchat.core.util.FileUtil
 import org.apache.commons.configuration.ConfigurationException
 import org.apache.commons.configuration.FileConfiguration
 import org.apache.commons.configuration.XMLConfiguration
@@ -47,6 +47,5 @@ public class ConfigurationManager {
     } catch (ConfigurationException e) {
       logger.error("Unable to save configuration", e);
     }
-
   }
 }

@@ -3,40 +3,21 @@ package ml.tchat.cli
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import ml.tchat.core.Connection
-import ml.tchat.core.ConnectionManager
+import ml.tchat.core.TChatCore
+import ml.tchat.core.TChatPlugin
 import ml.tchat.core.event.ConnectionReadyEvent
+import ml.tchat.core.event.LoginUnsuccessfulEvent
 import ml.tchat.core.event.MessageReceivedEvent
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 class TChatCli {
 
   static EventBus eventBus = new EventBus("globalEventBus")
 
-
-  static timeoutpatterns = [
-      /\bboobs?\b/,
-      /\bbewbs?\b/,
-      /\bfap\b/,
-      /fuck/,
-      /fuq/,
-      /\bshit\b/,
-      /\*\*\*/,
-      /\bpussy\b/,
-      /vagina/,
-      /\bdick\b/,
-      /\bfuq\b/,
-      /\bdafuq\b/,
-      /\bfart/,
-      /\(\s*Y\s*\)/,
-      /\(\s*\.?\s*Y\s*\.?\s*\)/,
-      /8=+D/,
-  ]
+  def timeoutPatternPlugin
 
   static void main(String[] args) {
     def cli = new CliBuilder(usage: 'TChatCli [options]')
@@ -66,7 +47,7 @@ class TChatCli {
 
     Logger.getRootLogger().setLevel(Level.TRACE);
     Logger.getRootLogger().addAppender(appender);
-    //Logger.getLogger("org.pircbotx").setLevel(Level.WARN);
+    //Logger.getLogger("org.pircbotx").setLevel(Level.FATAL);
 
     Logger.getLogger(TChatCli).info('Logging initialized');
   }
@@ -77,43 +58,55 @@ class TChatCli {
 
   public TChatCli(options) {
 
-    connection = ConnectionManager.createConnection(options.username, options.oauthToken)
-    connection.getEventBus().register(this);
+    // random stuff
+    TChatCore.pluginRegistry.register(new TChatPlugin() {
+      @Subscribe
+      public void onUnsuccessfulLogin(LoginUnsuccessfulEvent event) {
+        println "Unable to login"
+        TChatCore.disconnectAll()
+      }
+
+      @Subscribe
+      public void onConnectionReady(ConnectionReadyEvent event) {
+        event.connection.sendIRC().joinChannel("#nefarious411")
+        //event.connection.sendIRC().joinChannel("#aureylian")
+      }
+
+      @Subscribe
+      public void onMessage(MessageReceivedEvent event) {
+        println "${event.message.channel.name} : ${event.message.user.nick} : ${event.message.message}"
+      }
+    })
+
+    timeoutPatternPlugin = new TimeoutPatternPlugin()
+    //TChatCore.pluginRegistry.register(timeoutPatternPlugin)
+
+    Logger.getLogger(TChatCli).info('connecting')
+    connection = TChatCore.connect(options.username, options.oauthToken)
   }
 
 
   public void go() {
-    Logger.getLogger(TChatCli).info('connecting')
-    connection.connect()
-
     System.in.eachLine { line ->
       if (line == 'exit') {
-        ConnectionManager.disconnectAll()
+        TChatCore.disconnectAll()
         System.exit(0)
       } else if (line =~ /^addpattern /) {
         def pattern = line - 'addpattern '
-        timeoutpatterns.add(/$pattern/)
+        timeoutPatternPlugin.addPattern(/$pattern/)
         println "Pattern added:"
-        timeoutpatterns.each {
-          println it
-        }
+        timeoutPatternPlugin.printPatterns()
       } else if (line == 'printpatterns') {
-        timeoutpatterns.each {
-          println it
-        }
+        timeoutPatternPlugin.printPatterns()
       } else if (line.startsWith('removepattern')) {
         def patternIndex = line.replaceAll('^removepattern\\s?', '')
         if (!patternIndex) {
           println "You must specify an index"
-          timeoutpatterns.eachWithIndex { pattern, index ->
-            println "$index - $pattern"
-          }
+          timeoutPatternPlugin.printPatternsWithIndex()
         } else {
-          timeoutpatterns.remove(Integer.valueOf(patternIndex.trim()))
+          timeoutPatternPlugin.removePattern(Integer.valueOf(patternIndex.trim()))
           println "pattern was removed"
-          timeoutpatterns.eachWithIndex { pattern, index ->
-            println "$index - $pattern"
-          }
+          timeoutPatternPlugin.printPatternsWithIndex()
         }
       } else if (line.startsWith('eval')) {
         def script = line.replaceAll('^eval\\s?', '')
@@ -127,23 +120,4 @@ class TChatCli {
     }
   }
 
-
-  @Subscribe
-  public void onConnectionReady(ConnectionReadyEvent event) {
-    event.connection.sendIRC().joinChannel("#nefarious411")//aureylian")
-  }
-
-  @Subscribe
-  public void onMessage(MessageReceivedEvent event) {
-    //if ((["OP"] - event.getUser().getUserLevels(event.getChannel())).isEmpty()) {
-    //return;
-    //}
-    boolean doTimeout = timeoutpatterns.find {
-      event.message.toLowerCase() =~ it
-    }
-    if (doTimeout) {
-      println "${new Date().format("yyyy-dd-mm HH:mm")} - timing out ${event.user.nick} for message: ${event.message}"
-      event.connection.sendIRC().message(event.channel.name, ".timeout " + event.user.nick + " 1")
-    }
-  }
 }

@@ -1,4 +1,4 @@
-package ml.tchat.ui.config;
+package ml.tchat.core.config;
 
 
 public enum ConfigKeys {

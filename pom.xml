@@ -17,6 +17,13 @@
     <gmavenProviderSelection>2.0</gmavenProviderSelection>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>3.0</version>
+    </dependency>
+  </dependencies>
 
   <modules>
     <module>ml.tchat.core</module>
