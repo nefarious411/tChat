@@ -1,8 +1,7 @@
 package ml.tchat.ui.view;
 
-
-import java.awt.Component;
+import javafx.scene.Node
 
 public interface View {
-  Component asComponent();
+  Node asNode();
 }

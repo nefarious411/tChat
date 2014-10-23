@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import ml.tchat.core.config.ConfigurationManager
+import ml.tchat.ui.util.FxUtil
 import ml.tchat.ui.view.ShellView
 import ml.tchat.ui.view.impl.ShellViewImpl
 import org.apache.commons.configuration.FileConfiguration
@@ -18,7 +19,8 @@ public class TChatModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(ShellView.class).to(ShellViewImpl.class);
+    bind(ShellView.class).to(ShellViewImpl.class).asEagerSingleton();
+    requestStaticInjection(FxUtil)
   }
 
   @Provides
