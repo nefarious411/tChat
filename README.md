@@ -3,7 +3,7 @@ tChat
 
 Created new website:
 
-http://tchat.ml/
+http://tchat.ga/
 
 
 
